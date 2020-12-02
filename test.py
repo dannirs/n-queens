@@ -2,6 +2,7 @@ import random
 import time
 import math
 from math import trunc
+from queue import Queue
 
 # DIM = 0                 # Dimension of the board (n value)
 board = []              # Stores the board
@@ -35,9 +36,10 @@ def writeToFile():
 # The values in the conflict arrays represent the number of queens in each row or diagonal
 #       (i.e. a count of 1 indicates no conflict because there is only one queen in the row or diagonal)
 def changeConflicts(col, row, val, dim):
-    row_conflicts[row] += val
-    diagr_conflicts[col + row] += val
-    diagl_conflicts[col + (dim - row - 1)] += val
+    row_conflicts[row] = row_conflicts[row] + val
+    diagr_conflicts[col + row] = diagr_conflicts[col + row] + val
+    diagl_conflicts[col + (dim - row - 1)
+                    ] = diagl_conflicts[col + (dim - row - 1)] + val
 
 
 # Finds the index of the best new queen position. Ties are broken randomly.
@@ -181,6 +183,37 @@ def solveNQueens(dim):
     return False
 
 
+def solve_dfs(dim):
+    if dim < 1:
+        return []
+    solutions = []
+    stack = [[]]
+    while stack:
+        solution = stack.pop()
+        if conflict(solution):
+            continue
+        row = len(solution)
+        if row == dim:
+            solutions.append(solution)
+            continue
+        for col in range(dim):
+            queen = (row, col)
+            queens = solution.copy()
+            queens.append(queen)
+            stack.append(queens)
+    return solutions
+
+
+def conflict(q):
+    for i in range(1, len(q)):
+        for j in range(0, i):
+            a, b = q[i]
+            c, d = q[j]
+            if a == c or b == d or abs(a - c) == abs(b - d):
+                return True
+    return False
+
+
 def main():
 
     # Read in the file containing the DIM values
@@ -205,12 +238,14 @@ def main():
                 board = [1, 3, 5, 0, 2, 4]
                 solved = True
             else:
-                while (not solved):
-                    # Solved will be True when a solution is returned
-                    print("I am going to solve queens")
-                    solved = solveNQueens(dim)
-
-            print("Board configuration found for size " + str(dimension))
+               # while (not solved):
+                # Solved will be True when a solution is returned
+                print("I am going to solve queens")
+                solved = solveNQueens(dim)
+                print("Board configuration found for size " + str(dimension))
+            if solved == False:
+                dfs_sol = solve_dfs(dim)
+            print("Board configuration found for size " + str(dfs_sol))
 
             writeToFile()
 
