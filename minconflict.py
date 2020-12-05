@@ -4,26 +4,13 @@ import random
 import time
 
 # initially set # of queens/board size as 0
-DIM = 0  
+DIM = 0
 # store board in a list
-board = []  
+board = []
 # keep track of row, right diagonal, and left diagonal conflicts
-row_conflicts = []  
-diagr_conflicts = []  
-diagl_conflicts = []  
-
-
-# read from file containing # of queens
-def readInFile():
-    with open('input.txt', 'r') as file:
-        dimensionArray = []
-        for line in file:
-            # store each # of queens into a list
-            dimensionArray.append(int(line.rstrip('\n')))
-    file.close()
-    # Clear the output file
-    open('output.txt', 'w').close()
-    return dimensionArray
+row_conflicts = []
+diagr_conflicts = []
+diagl_conflicts = []
 
 
 # Append the solution array to the output file
@@ -54,7 +41,8 @@ def minConflictPos(col):
     minConflictRows = []
     for row in range(DIM):
         # calculate the number of conflicts using the conflict arrays
-        conflicts = row_conflicts[row] + diagr_conflicts[col + row] + diagl_conflicts[col + (DIM - row - 1)]
+        conflicts = row_conflicts[row] + diagr_conflicts[col +
+                                                         row] + diagl_conflicts[col + (DIM - row - 1)]
         # if there are no conflicts in a row, immediately return that row value
         if conflicts == 0:
             return row
@@ -95,7 +83,8 @@ def createBoard():
         # Pop the next possible row location to test
         testRow = rowSet.pop()
         # Calculate the conflicts for potential location
-        conflicts = row_conflicts[testRow] + diagr_conflicts[col + testRow] + diagl_conflicts[col + (DIM - testRow - 1)]
+        conflicts = row_conflicts[testRow] + diagr_conflicts[col +
+                                                             testRow] + diagl_conflicts[col + (DIM - testRow - 1)]
         # If there are no conflicts, place a queen in that location on the board
         if conflicts == 0:
             board.append(testRow)
@@ -107,7 +96,8 @@ def createBoard():
             # Take the next row from the set to test
             testRow2 = rowSet.pop()
             # Calculate the conflicts
-            conflicts2 = row_conflicts[testRow2] + diagr_conflicts[col + testRow2] + diagl_conflicts[col + (DIM - testRow2 - 1)]
+            conflicts2 = row_conflicts[testRow2] + diagr_conflicts[col +
+                                                                   testRow2] + diagl_conflicts[col + (DIM - testRow2 - 1)]
             # If there are no conflicts, place a queen in that location on the board
             if conflicts2 == 0:
                 board.append(testRow2)
@@ -125,7 +115,7 @@ def createBoard():
         board[col] = rowSet.pop()
         # Update the conflict lists
         changeConflicts(col, board[col], 1)
- 
+
 
 # Finds the column with the most conflicts
 def findMaxConflictCol():
@@ -134,17 +124,18 @@ def findMaxConflictCol():
     maxConflictCols = []
 
     for col in range(0, DIM):
-            # Determine the row value for the current column
-            row = board[col]
-            # Calculate the number of conflicts using the conflict lists
-            conflicts = row_conflicts[row] + diagr_conflicts[col + row] + diagl_conflicts[col + (DIM - row - 1)]
-            # If conflicts are greater than the current max, make that column the maximum
-            if (conflicts > maxConflicts):
-                    maxConflictCols = [col]
-                    maxConflicts = conflicts
-            # If the conflicts equal the current max, append the index value to the maxConflictCols list
-            elif conflicts == maxConflicts:
-                    maxConflictCols.append(col)
+        # Determine the row value for the current column
+        row = board[col]
+        # Calculate the number of conflicts using the conflict lists
+        conflicts = row_conflicts[row] + diagr_conflicts[col +
+                                                         row] + diagl_conflicts[col + (DIM - row - 1)]
+        # If conflicts are greater than the current max, make that column the maximum
+        if (conflicts > maxConflicts):
+            maxConflictCols = [col]
+            maxConflicts = conflicts
+        # If the conflicts equal the current max, append the index value to the maxConflictCols list
+        elif conflicts == maxConflicts:
+            maxConflictCols.append(col)
     # Randomly choose from the list of tied maximums
     choice = random.choice(maxConflictCols)
     return choice, maxConflicts
@@ -161,10 +152,10 @@ def solveNQueens():
         maxIteration = 0.6 * DIM
     while (iteration < maxIteration):
         # Calculate the maximum conflicting column and the number of conflicts it contains
- 
-#       if tries < 30000000: 
+
+        #       if tries < 30000000:
         col, numConflicts = findMaxConflictCol()
-#       else: 
+#       else:
         # col, numConflicts = findRandCol()
 
         # If the number of queens in the row, and diagonals is greater than 1 each (i.e. there are conflicts)
@@ -196,9 +187,11 @@ def main():
     global diagl_conflicts
 
     # Read in the file containing the DIM values
-    dimensionArray = readInFile()
+    filepath = 'input.txt'
+    fp = open(filepath, "r", encoding="utf-8")
+    #dimensionArray = readInFile()
 
-    for dimension in dimensionArray:
+    for dimension in fp:
         # If the dimension is outside the constraints
         if dimension <= 3 or dimension > 10000000:
             # Print error and write empty array to file
@@ -210,7 +203,8 @@ def main():
             # Start timer and set/reset boolen
             time0 = time.time()
             solved = False
-            print("Searching for board configuration of size " + str(dimension) + "...")
+            print("Searching for board configuration of size " +
+                  str(dimension) + "...")
             # 6 is a special case, return hard-coded solution and skip while loop
             if (DIM == 6):
                 board = [1, 3, 5, 0, 2, 4]
@@ -228,6 +222,7 @@ def main():
             tot_time = time1 - time0
             time_string = str(trunc(tot_time * 100) / 100)
             print("   Took " + time_string + " seconds\n")
+    fp.close()
 
 
 main()
