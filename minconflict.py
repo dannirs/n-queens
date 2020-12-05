@@ -188,10 +188,11 @@ def main():
 
     # Read in the file containing the DIM values
     filepath = 'input.txt'
+    dimensionArray = []
     fp = open(filepath, "r", encoding="utf-8")
-    #dimensionArray = readInFile()
-
-    for dimension in fp:
+    for line in fp:
+        dimensionArray.append(int(line.rstrip('\n')))
+    for dimension in dimensionArray:
         # If the dimension is outside the constraints
         if dimension <= 3 or dimension > 10000000:
             # Print error and write empty array to file
