@@ -7,8 +7,8 @@ import time
 size = 0
 # store domain in a list
 domain = []
-# keep track of row, right diagonal, and left diagonal conflicts
-constraints_row = []
+# keep track of x, right diagonal, and left diagonal conflicts
+constraints_x = []
 constraights_right_diagonal = []
 constraights_left_diagonal = []
 
@@ -16,52 +16,53 @@ constraights_left_diagonal = []
 # Append the solution array to the output file
 def write():
     # Add one to each index to convert from 0 to 1 base indexing
-    solutionArrayStr = str([x + 1 for x in domain])
+    array_solution = str([x + 1 for x in domain])
     with open('output.txt', 'a', 64) as file:
-        file.write(solutionArrayStr + "\n\n")
+        file.write(array_solution + "\n\n")
     file.close()
 
 
 # Updates the conflict table with new conflicts from the updated queen position
 # When the parameter val is 1 it will add a conflict to the global lists
 # When the parameter val as -1, it will subtract a conflict to the global lists
-# The values in the conflict arrays represent the number of queens in each row or diagonal
-#       (i.e. a count of 1 indicates no conflict because there is only one queen in the row or diagonal)
-def conflicts_update(col, row, val):
-    constraints_row[row] += val
-    constraights_right_diagonal[col + row] += val
-    constraights_left_diagonal[col + (size - row - 1)] += val
+# The values in the conflict arrays represent the number of queens in each x or diagonal
+#       (i.e. a count of 1 indicates no conflict because there is only one queen in the x or diagonal)
+def conflicts_update(y, x, ele):
+
+    constraints_x[x] += ele
+    constraights_right_diagonal[y + x] += ele
+    constraights_left_diagonal[y + (size - x - 1)] += ele
 
 
 # Finds the index of the best new queen position. Ties are broken randomly.
-# Parameter: the current column index
-def minimum_conflict(col):
+# Parameter: the current yumn index
+def minimum_conflict(y):
     # initially set # of conflicts equal to # of queens
-    minConflicts = size
-    minConflictRows = []
-    for row in range(size):
+    minc = size
+    min_row_conflicts = []
+    for x in range(size):
         # calculate the number of conflicts using the conflict arrays
-        conflicts = constraints_row[row] + constraights_right_diagonal[col +
-                                                         row] + constraights_left_diagonal[col + (size - row - 1)]
-        # if there are no conflicts in a row, immediately return that row value
-        if conflicts == 0:
-            return row
-        # if the number of conflicts is less, change it to the minConflicts value
-        if conflicts < minConflicts:
-            minConflictRows = [row]
-            minConflicts = conflicts
+        con = constraints_x[x] + constraights_right_diagonal[y +
+                                                         x] + constraights_left_diagonal[y + (size - x - 1)]
+        # if there are no conflicts in a x, immediately return that x value
+        if con == 0:
+            return x
+        # if the number of conflicts is less, change it to the minc value
+        if con < minc:
+            min_row_conflicts = [x]
+            minc = con
         # if the number of conflicts is equal, append the index instead of changing it
-        elif conflicts == minConflicts:
-            minConflictRows.append(row)
+        elif con == minc:
+            min_row_conflicts.append(x)
     # randomly choose the index from the list of tied conflict values
-    choice = random.choice(minConflictRows)
-    return choice
+    res = random.choice(min_row_conflicts)
+    return res
 
 
 # Sets up the domain using a greedy algorithm
 def build_domain():
     global domain
-    global constraints_row
+    global constraints_x
     global constraights_right_diagonal
     global constraights_left_diagonal
 
@@ -72,72 +73,72 @@ def build_domain():
     # The diagonal conflict lists are the size of the number of diagonals of the domain
     constraights_right_diagonal = [0] * ((2 * size) - 1)
     constraights_left_diagonal = [0] * ((2 * size) - 1)
-    constraints_row = [0] * size
+    constraints_x = [0] * size
 
-    # Create an ordered set of all possible row values
-    rowSet = set(range(0, size))
+    # Create an ordered set of all possible x values
+    xSet = set(range(0, size))
     # Create a list to keep track of which queens have not been placed
     notPlaced = []
 
-    for col in range(0, size):
-        # Pop the next possible row location to test
-        testRow = rowSet.pop()
+    for y in range(0, size):
+        # Pop the next possible x location to test
+        testx = xSet.pop()
         # Calculate the conflicts for potential location
-        conflicts = constraints_row[testRow] + constraights_right_diagonal[col +
-                                                             testRow] + constraights_left_diagonal[col + (size - testRow - 1)]
+        conflicts = constraints_x[testx] + constraights_right_diagonal[y +
+                                                             testx] + constraights_left_diagonal[y + (size - testx - 1)]
         # If there are no conflicts, place a queen in that location on the domain
         if conflicts == 0:
-            domain.append(testRow)
-            conflicts_update(col, domain[col], 1)
+            domain.append(testx)
+            conflicts_update(y, domain[y], 1)
         # If a conflict is found...
         else:
-            # Place the potential row to the back of the set
-            rowSet.add(testRow)
-            # Take the next row from the set to test
-            testRow2 = rowSet.pop()
+            # Place the potential x to the back of the set
+            xSet.add(testx)
+            # Take the next x from the set to test
+            testx2 = xSet.pop()
             # Calculate the conflicts
-            conflicts2 = constraints_row[testRow2] + constraights_right_diagonal[col +
-                                                                   testRow2] + constraights_left_diagonal[col + (size - testRow2 - 1)]
+            conflicts2 = constraints_x[testx2] + constraights_right_diagonal[y +
+                                                                   testx2] + constraights_left_diagonal[y + (size - testx2 - 1)]
             # If there are no conflicts, place a queen in that location on the domain
             if conflicts2 == 0:
-                domain.append(testRow2)
-                conflicts_update(col, domain[col], 1)
+                domain.append(testx2)
+                conflicts_update(y, domain[y], 1)
             else:
-                # Otherwise, add the possible row back to the set
-                rowSet.add(testRow2)
+                # Otherwise, add the possible x back to the set
+                xSet.add(testx2)
                 # Add a None to the domain to hold the place of the potential queen
                 domain.append(None)
-                # Keep track of which column was not placed to be handled later
-                notPlaced.append(col)
+                # Keep track of which yumn was not placed to be handled later
+                notPlaced.append(y)
 
-    for col in notPlaced:
+    for y in notPlaced:
         # Place the remaining queen locations
-        domain[col] = rowSet.pop()
+        domain[y] = xSet.pop()
         # Update the conflict lists
-        conflicts_update(col, domain[col], 1)
+        conflicts_update(y, domain[y], 1)
 
 
-# Finds the column with the most conflicts
-def conflicts_column():
+# Finds the yumn with the most conflicts
+def conflicts_yumn():
     conflicts = 0
     maxConflicts = 0
-    maxConflictCols = []
+    maxConflictys = []
 
-    for col in range(0, size):
-        # Determine the row value for the current column
-        row = domain[col]
+    for y in range(0, size):
+        # Determine the x value for the current yumn
+        x = domain[y]
         # Calculate the number of conflicts using the conflict lists
-        conflicts = constraints_row[row] + constraights_right_diagonal[col +
-                                                         row] + constraights_left_diagonal[col + (size - row - 1)]
-        # If conflicts are greater than the current max, make that column the maximum
+        conflicts = constraints_x[x] + constraights_right_diagonal[y +
+                                                         x] + constraights_left_diagonal[y + (size - x - 1)]
+        # If conflicts are greater than the current max, make that yumn the maximum
         if (conflicts > maxConflicts):
-            maxConflictCols = [col]
+            maxConflictys = [y]
             maxConflicts = conflicts
-        # If the conflicts equal the current max, append the index value to the maxConflictCols list
+        # If the conflicts equal the current max, append the index value to the maxConflictys list
         elif conflicts == maxConflicts:
-            maxConflictCols.append(col)
+            maxConflictys.append(y)
     # Randomly choose from the list of tied maximums
-    choice = random.choice(maxConflictCols)
+    choice = random.choice(maxConflictys)
     return choice, maxConflicts
 
 
@@ -151,26 +152,26 @@ def solve():
     else:
         maxIteration = 0.6 * size
     while (iteration < maxIteration):
-        # Calculate the maximum conflicting column and the number of conflicts it contains
+        # Calculate the maximum conflicting yumn and the number of conflicts it contains
 
         #       if tries < 30000000:
-        col, numConflicts = conflicts_column()
+        y, numConflicts = conflicts_yumn()
 #       else:
-        # col, numConflicts = findRandCol()
+        # y, numConflicts = findRandy()
 
-        # If the number of queens in the row, and diagonals is greater than 1 each (i.e. there are conflicts)
+        # If the number of queens in the x, and diagonals is greater than 1 each (i.e. there are conflicts)
         if (numConflicts > 3):
-            # Use the minimum_conflict() function to determine the row index with the least number of conflicts
-            newLocation = minimum_conflict(col)
+            # Use the minimum_conflict() function to determine the x index with the least number of conflicts
+            newLocation = minimum_conflict(y)
             # If the better location is not its current location, switch the location
-            if (newLocation != domain[col]):
+            if (newLocation != domain[y]):
                 # Remove the conflicts from the position the queen is leaving
-                conflicts_update(col, domain[col], -1)
-                domain[col] = newLocation
+                conflicts_update(y, domain[y], -1)
+                domain[y] = newLocation
                 # Add a conflict to the position the queen is entering
-                conflicts_update(col, newLocation, 1)
-        # If the max number of conflicts (i.e. the number of queens in each row and diagonals) on the domain
-        #       equals 3, then there are no conflicts since the queen is alone in it's row and both diagonals
+                conflicts_update(y, newLocation, 1)
+        # If the max number of conflicts (i.e. the number of queens in each x and diagonals) on the domain
+        #       equals 3, then there are no conflicts since the queen is alone in it's x and both diagonals
         elif numConflicts == 3:
             # Solution is found
             return True
@@ -182,7 +183,7 @@ def solve():
 def main():
     global size
     global domain
-    global constraints_row
+    global constraints_x
     global constraights_right_diagonal
     global constraights_left_diagonal
 
