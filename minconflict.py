@@ -293,7 +293,7 @@ def plot_solution(num_queens):
     for queen in solution:
         ax.add_patch(patches.Rectangle((queen, count), 1, 1))
         count += 1
-    fig.savefig(''.join([str(a) for a in solution]) +
+    fig.savefig(''.join(num_queens) +
                 '.png', dpi=150, bbox_inches='tight')
     plt.close(fig)
 # this function is called to initiate the program
