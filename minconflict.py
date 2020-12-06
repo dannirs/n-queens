@@ -120,34 +120,34 @@ def updateConflicts(col, row, add):
 # finds the row in the column that has the fewest # of attacking queens (min-conflicts algorithm).
 # this is where the queen will be moved to
 # parameters: col - the index of the column that the queen is in 
-def minConflict(col):
+def minConflict(c):
     # initially set minimum # of conflicts equal to total # of queens 
     minimum_conflict = numQueens
     # list to store the rows with minimum # of attacking queens 
     minRows = []
     
     # iterate through each row in the column
-    for row in range(numQueens):
+    for r in range(numQueens):
         # calculate the total number of attacking queens by adding the number of queens in that row, left diagonal, and right diagonal 
-        conflicts = numRow[row] + numRightDiag[col + row] + numLeftDiag[col + (numQueens - row - 1)]
+        conflicts = numRow[r] + numRightDiag[c + r] + numLeftDiag[c + (numQueens - r - 1)]
 
         # if the number of queens is less than minimum_conflict, update minimum_conflict and set the minRows list as containing only the index of the current row
         if conflicts < minimum_conflict:
-            minRows = [row]
+            minRows = [r]
             minimum_conflict = conflicts
             
-        # if the number of queens is equal to minimum_conflict, append the row index to the list instead
+        # if the number of queens is equal to minimum_conflict, append the row index to the list 
         elif conflicts == minimum_conflict:
-            minRows.append(row)
+            minRows.append(r)
             
-    # randomly choose a row index from the list of rows with smallest # of queens
+    # select randomly a row index from list of rows with smallest # of queens
     minRow = random.choice(minRows)
     return minRow
 
 
 # heuristic that finds the column with the most # of attacking queens; will move queen in this column next
 def maxCol():
-    conflicts = 0
+    con = 0
     maximum_conflicts = 0
     # create a list to store the index of the max column
     conflictColsList = []
@@ -157,13 +157,13 @@ def maxCol():
             # get the row value for the current column (where the queen is currently placed)
             r = domain[c]
             # find the # of attacking queens
-            conflicts = numRow[r] + numRightDiag[c + r] + numLeftDiag[c + (numQueens - r - 1)]
+            con = numRow[r] + numRightDiag[c + r] + numLeftDiag[c + (numQueens - r - 1)]
             # if the # of attacking queens is greater than the current max, then set the column as maximum_conflictsCol and update maximum_conflicts
-            if (conflicts > maximum_conflicts):
+            if (con > maximum_conflicts):
                     conflictColsList = [c]
-                    maximum_conflicts = conflicts
+                    maximum_conflicts = con
             # if the column ties with the current max column, then append the index value to the conflictColsList list
-            elif conflicts == maximum_conflicts:
+            elif con == maximum_conflicts:
                     conflictColsList.append(c)
     # Randomly choose from the list of tied columns
     maxCol = random.choice(conflictColsList)
@@ -291,7 +291,7 @@ def main():
         # writes the solution to the output file
         writeOutput()
         
-        # calculates the time it took to find a solution and prints it in the console
+        # figures out the time it took to find a solution and outputs it in the console
         endTime = time.time()
         totalTime = endTime - startTime
         timeStr = str(trunc(totalTime * 100) / 100)
