@@ -8,12 +8,13 @@ size = 0
 # store domain in a list
 domain = []
 # keep track of x, right diagonal, and left diagonal conflicts
-constraints_x = []
 constraights_right_diagonal = []
 constraights_left_diagonal = []
+constraints_x = []
 
 
-# Append the solution array to the output file
+
+# write fn appends the solution array into an output file named output.txt
 def write():
     # Add one to each index to convert from 0 to 1 base indexing
     array_solution = str([x + 1 for x in domain])
