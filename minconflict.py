@@ -258,6 +258,18 @@ def writeOutput():
     file.close()
 
 
+def printDomain(domain, numQueens):
+    # print(domain)
+    row = [[ '-' for x in range(0, numQueens)] for y in range(0, numQueens)]
+    for i in range(numQueens): 
+        num = domain[i] - 1
+        row[i][num] = 'Q'
+ 
+    for i in row:
+        print(*i)
+    
+    return(row)
+    
 # this function is called to initiate the program
 def main():
     # use global keyword so that we can modify each variable inside the function
@@ -296,6 +308,7 @@ def main():
         totalTime = endTime - startTime
         timeStr = str(trunc(totalTime * 100) / 100)
         print("Solution found in " + timeStr + " seconds\n")
+        printDomain(domain, numQueens)
 #         for i in range(len(domain)):
 #             domain[i] += 1
 #         print(domain)
