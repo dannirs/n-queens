@@ -1,2 +1,2 @@
 # n-queens
-This program can solve n-queens problem with n up to 10,000 at least.
+This program can solve n-queens problem with n up to 100,000 at least.
