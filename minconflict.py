@@ -3,19 +3,19 @@ import random
 import time
 
 
-# creates an initial board 
-def createInitialBoard():
+# creates an initial domain 
+def createInitialdomain():
     # use global keyword so that we can modify each variable inside the function
-    global board
+    global domain
     global numRow
     global numRightDiag
     global numLeftDiag
 
-    # create a list to store the chess board
-    board = []
+    # create a list to store the chess domain
+    domain = []
 
     # initialize the lists for # of queens in each row, left diagonal, and right diagonal
-    # the size of the lists are the # of rows and # of diagonals in the board 
+    # the size of the lists are the # of rows and # of diagonals in the domain 
     # initially, there are 0 queens in each list
     numRow = [0] * numQueens
     numRightDiag = [0] * ((2 * numQueens) - 1)
@@ -35,10 +35,10 @@ def createInitialBoard():
         conflicts = numRow[tryRow] + numRightDiag[col + tryRow] + numLeftDiag[col + (numQueens - tryRow - 1)]
 
         # if there are 0 attacking queens, then immediately place the queen at that position
-        # this is to make as "good" an initial board as possible to make it easier to find a solution
+        # this is to make as "good" an initial domain as possible to make it easier to find a solution
         if conflicts == 0:
-            # append the row index to the board list to show the queen's positioning
-            board.append(tryRow)
+            # append the row index to the domain list to show the queen's positioning
+            domain.append(tryRow)
             # update row and diagonal lists, passing add = 1 to show that conflicts need to be added
             updateConflicts(col, tryRow, 1)
         
@@ -49,41 +49,41 @@ def createInitialBoard():
             tryRow = rowsRemaining.pop()
             conflicts = numRow[tryRow] + numRightDiag[col + tryRow] + numLeftDiag[col + (numQueens - tryRow - 1)]
 
-            # if there are no attacking queens, place the queen at that location and append the row index to the board, update conflicts
+            # if there are no attacking queens, place the queen at that location and append the row index to the domain, update conflicts
             if conflicts == 0:
-                board.append(tryRow)
+                domain.append(tryRow)
                 updateConflicts(col, tryRow, 1)
 
             else:
                 # Otherwise, add this row at the back of the set as well to test it later
                 rowsRemaining.add(tryRow)
-                # add "none" to the board to show that the column has not yet been filled
-                board.append(None)
+                # add "none" to the domain to show that the column has not yet been filled
+                domain.append(None)
                 # append the column index to the colsRemaining list to come back to that column later
                 colsRemaining.append(col)
 
-    # after iterating through all columns in the board, iterate through the list of all columns that have not yet been placed
+    # after iterating through all columns in the domain, iterate through the list of all columns that have not yet been placed
     for col in colsRemaining:
-        # place the queen at the first row in rowsRemaining, regardless of if there are conflicts or not to finish creating the initial board
-        board[col] = rowsRemaining.pop()
+        # place the queen at the first row in rowsRemaining, regardless of if there are conflicts or not to finish creating the initial domain
+        domain[col] = rowsRemaining.pop()
 
         # update row and diagonal lists, passing add= 1 to show that conflicts need to be added
-        updateConflicts(col, board[col], 1)
+        updateConflicts(col, domain[col], 1)
 
 
-# creates a random board (called if there's an infinite loop)
-def createRandomBoard():
+# creates a random domain (called if there's an infinite loop)
+def createRandomdomain():
     # use global keyword so that we can modify each variable inside the function
-    global board
+    global domain
     global numRow
     global numRightDiag
     global numLeftDiag
 
-    # create a list to store the chess board
-    board = []
+    # create a list to store the chess domain
+    domain = []
 
     # initialize the lists for # of queens in each row, left diagonal, and right diagonal
-    # the size of the lists are the # of rows and # of diagonals in the board 
+    # the size of the lists are the # of rows and # of diagonals in the domain 
     # initially, there are 0 queens in each list
     numRow = [0] * numQueens
     numRightDiag = [0] * ((2 * numQueens) - 1)
@@ -98,8 +98,8 @@ def createRandomBoard():
     for col in range(0, numQueens):
         # pop the first row from the list 
         tryRow = rowsRemaining.pop()
-        # append the row index to the board list to show the queen's positioning
-        board.append(tryRow)
+        # append the row index to the domain list to show the queen's positioning
+        domain.append(tryRow)
         # update row and diagonal lists, passing add = 1 to show that conflicts need to be added
         updateConflicts(col, tryRow, 1)
 
@@ -122,7 +122,7 @@ def updateConflicts(col, row, add):
 # parameters: col - the index of the column that the queen is in 
 def minConflict(col):
     # initially set minimum # of conflicts equal to total # of queens 
-    minConflicts = numQueens
+    minimum_conflict = numQueens
     # list to store the rows with minimum # of attacking queens 
     minRows = []
     
@@ -131,13 +131,13 @@ def minConflict(col):
         # calculate the total number of attacking queens by adding the number of queens in that row, left diagonal, and right diagonal 
         conflicts = numRow[row] + numRightDiag[col + row] + numLeftDiag[col + (numQueens - row - 1)]
 
-        # if the number of queens is less than minConflicts, update minConflicts and set the minRows list as containing only the index of the current row
-        if conflicts < minConflicts:
+        # if the number of queens is less than minimum_conflict, update minimum_conflict and set the minRows list as containing only the index of the current row
+        if conflicts < minimum_conflict:
             minRows = [row]
-            minConflicts = conflicts
+            minimum_conflict = conflicts
             
-        # if the number of queens is equal to minConflicts, append the row index to the list instead
-        elif conflicts == minConflicts:
+        # if the number of queens is equal to minimum_conflict, append the row index to the list instead
+        elif conflicts == minimum_conflict:
             minRows.append(row)
             
     # randomly choose a row index from the list of rows with smallest # of queens
@@ -148,39 +148,39 @@ def minConflict(col):
 # heuristic that finds the column with the most # of attacking queens; will move queen in this column next
 def maxCol():
     conflicts = 0
-    maxConflicts = 0
+    maximum_conflicts = 0
     # create a list to store the index of the max column
-    maxConflictCols = []
+    conflictColsList = []
 
     # iterate through all the columns
-    for col in range(0, numQueens):
+    for c in range(0, numQueens):
             # get the row value for the current column (where the queen is currently placed)
-            row = board[col]
+            r = domain[c]
             # find the # of attacking queens
-            conflicts = numRow[row] + numRightDiag[col + row] + numLeftDiag[col + (numQueens - row - 1)]
-            # if the # of attacking queens is greater than the current max, then set the column as maxConflictsCol and update maxConflicts
-            if (conflicts > maxConflicts):
-                    maxConflictCols = [col]
-                    maxConflicts = conflicts
-            # if the column ties with the current max column, then append the index value to the maxConflictCols list
-            elif conflicts == maxConflicts:
-                    maxConflictCols.append(col)
+            conflicts = numRow[r] + numRightDiag[c + r] + numLeftDiag[c + (numQueens - r - 1)]
+            # if the # of attacking queens is greater than the current max, then set the column as maximum_conflictsCol and update maximum_conflicts
+            if (conflicts > maximum_conflicts):
+                    conflictColsList = [c]
+                    maximum_conflicts = conflicts
+            # if the column ties with the current max column, then append the index value to the conflictColsList list
+            elif conflicts == maximum_conflicts:
+                    conflictColsList.append(c)
     # Randomly choose from the list of tied columns
-    maxCol = random.choice(maxConflictCols)
-    return maxCol, maxConflicts
+    maxCol = random.choice(conflictColsList)
+    return maxCol, maximum_conflicts
 
 
-# sets up an initial board by calling createInitialBoard() and then returns true if a solution is found
+# sets up an initial domain by calling createInitialdomain() and then returns true if a solution is found
 # returns false if a solution is not found under the given number of iterations
 def solve():
     global infiniteLoop
     
-    # if there was an infinite loop detected, create a random board
+    # if there was an infinite loop detected, create a random domain
     if (infiniteLoop == True):
-        createRandomBoard()
+        createRandomdomain()
     else: 
-        # else, call createInitialBoard() to create a board that's "close" to the solution
-        createInitialBoard()
+        # else, call createInitialdomain() to create a domain that's "close" to the solution
+        createInitialdomain()
     # counts the number of iterations
     iteration = 0
     # keeps track of the movement of the queen between iterations
@@ -188,7 +188,7 @@ def solve():
 
     # # of iterations that the program will run for during each new attempt to find a solution
     # keep it under numQueens to allow the program to run faster; stop an attempt if a solution is not found within the max # of iterations and start a new attempt
-    # for smaller board sizes, totalIterations needs to be increased so that there are enough iterations to successfully reach a solution
+    # for smaller domain sizes, totalIterations needs to be increased so that there are enough iterations to successfully reach a solution
     if numQueens < 100:
         totalIterations = numQueens
     else:
@@ -208,13 +208,13 @@ def solve():
             # append the position that the queen is moving to to the positions list
             positions.append(position)
             # if position is different from the queen's current position:
-            if (position != board[col]):
+            if (position != domain[col]):
                 # call updateConflicts with add= -1 to remove 1 from the rows, left diagonal, and right diagonal lists
-                updateConflicts(col, board[col], -1)
-                # replace the row index in board[col] with the new row index to show the queen's new position
-                board[col] = position
+                updateConflicts(col, domain[col], -1)
+                # replace the row index in domain[col] with the new row index to show the queen's new position
+                domain[col] = position
                 # call updateConflicts with add = 1 to add 1 to the rows, left diagonal, and right diagonal lists of the queen's new position
-                updateConflicts(col, board[col], 1)
+                updateConflicts(col, domain[col], 1)
         # if total # of conflicts is 3 (1 in row, 1 in left diagonal, and 1 in right diagonal), then there is only 1 attacking queen so the queen doesn't need to be moved
         elif numConflicts == 3:
             # solution is found
@@ -247,11 +247,11 @@ def readInput():
 # create an output file to insert the solutions into
 def writeOutput():
     # add 1 to each index value in the solution list to improve readability
-    # ex. turns index 0 into index 1 to represent the 1st square from the top of the chess board in a given column
-    for i in range(len(board)):
-        board[i] += 1
+    # ex. turns index 0 into index 1 to represent the 1st square from the top of the chess domain in a given column
+    for i in range(len(domain)):
+        domain[i] += 1
         
-    solution = str(board)
+    solution = str(domain)
     with open('output.txt', 'a', 64) as file:
         # write the list containing the solution to output file
         file.write(solution + "\n\n")
@@ -262,7 +262,7 @@ def writeOutput():
 def main():
     # use global keyword so that we can modify each variable inside the function
     global numQueens
-    global board
+    global domain
     global numRow
     global numRightDiag
     global numLeftDiag
@@ -296,9 +296,9 @@ def main():
         totalTime = endTime - startTime
         timeStr = str(trunc(totalTime * 100) / 100)
         print("Solution found in " + timeStr + " seconds\n")
-#         for i in range(len(board)):
-#             board[i] += 1
-#         print(board)
+#         for i in range(len(domain)):
+#             domain[i] += 1
+#         print(domain)
 
 
 main()
