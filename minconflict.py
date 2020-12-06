@@ -1,9 +1,14 @@
 from math import trunc
 import random
 import time
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import seaborn
+from typing import Generator, List
+
+# creates an initial domain
 
 
-# creates an initial domain 
 def createInitialdomain():
     # use global keyword so that we can modify each variable inside the function
     global domain
@@ -15,7 +20,7 @@ def createInitialdomain():
     domain = []
 
     # initialize the lists for # of queens in each row, left diagonal, and right diagonal
-    # the size of the lists are the # of rows and # of diagonals in the domain 
+    # the size of the lists are the # of rows and # of diagonals in the domain
     # initially, there are 0 queens in each list
     numRow = [0] * numQueens
     numRightDiag = [0] * ((2 * numQueens) - 1)
@@ -23,7 +28,7 @@ def createInitialdomain():
 
     # create an ordered set of all row index values
     rowsRemaining = set(range(0, numQueens))
-    # create a list that keeps track of which columns have not been solved for 
+    # create a list that keeps track of which columns have not been solved for
     colsRemaining = []
 
     # iterate through each column
@@ -32,7 +37,8 @@ def createInitialdomain():
         tryRow = rowsRemaining.pop()
 
         # add the total # of queens that can attack the square using col and tryRow
-        conflicts = numRow[tryRow] + numRightDiag[col + tryRow] + numLeftDiag[col + (numQueens - tryRow - 1)]
+        conflicts = numRow[tryRow] + numRightDiag[col +
+                                                  tryRow] + numLeftDiag[col + (numQueens - tryRow - 1)]
 
         # if there are 0 attacking queens, then immediately place the queen at that position
         # this is to make as "good" an initial domain as possible to make it easier to find a solution
@@ -41,13 +47,14 @@ def createInitialdomain():
             domain.append(tryRow)
             # update row and diagonal lists, passing add = 1 to show that conflicts need to be added
             updateConflicts(col, tryRow, 1)
-        
+
         else:
             # if there are attacking queens, then add the row to the back of the set to test it again later
             rowsRemaining.add(tryRow)
             # pop the next row from the set to test
             tryRow = rowsRemaining.pop()
-            conflicts = numRow[tryRow] + numRightDiag[col + tryRow] + numLeftDiag[col + (numQueens - tryRow - 1)]
+            conflicts = numRow[tryRow] + numRightDiag[col +
+                                                      tryRow] + numLeftDiag[col + (numQueens - tryRow - 1)]
 
             # if there are no attacking queens, place the queen at that location and append the row index to the domain, update conflicts
             if conflicts == 0:
@@ -83,20 +90,20 @@ def createRandomdomain():
     domain = []
 
     # initialize the lists for # of queens in each row, left diagonal, and right diagonal
-    # the size of the lists are the # of rows and # of diagonals in the domain 
+    # the size of the lists are the # of rows and # of diagonals in the domain
     # initially, there are 0 queens in each list
     numRow = [0] * numQueens
     numRightDiag = [0] * ((2 * numQueens) - 1)
     numLeftDiag = [0] * ((2 * numQueens) - 1)
-    
+
     # create an ordered set of all row index values
     rowsRemaining = list(range(0, numQueens))
-    # randomly shuffle the list 
+    # randomly shuffle the list
     random.shuffle(rowsRemaining)
 
     # iterate through each column
     for col in range(0, numQueens):
-        # pop the first row from the list 
+        # pop the first row from the list
         tryRow = rowsRemaining.pop()
         # append the row index to the domain list to show the queen's positioning
         domain.append(tryRow)
@@ -108,10 +115,10 @@ def createRandomdomain():
 # right diagonal lists that store the # of queens. this function updates the lists.
 # parameters: col - column that queen is moved to/from
 # row - row that the queen is moved to/from
-# add - if 1 (queen is moved to a position), will add a queen to the list; 
-# if -1 (queen is moved from a position), will subtract a queen from the list 
+# add - if 1 (queen is moved to a position), will add a queen to the list;
+# if -1 (queen is moved from a position), will subtract a queen from the list
 def updateConflicts(col, row, add):
-    # update the row, right diagonal, and left diagonal lists that the queen is moved from/to by either adding or subtracting 1 
+    # update the row, right diagonal, and left diagonal lists that the queen is moved from/to by either adding or subtracting 1
     numRow[row] += add
     numRightDiag[col + row] += add
     numLeftDiag[col + (numQueens - row - 1)] += add
@@ -119,27 +126,28 @@ def updateConflicts(col, row, add):
 
 # finds the row in the column that has the fewest # of attacking queens (min-conflicts algorithm).
 # this is where the queen will be moved to
-# parameters: col - the index of the column that the queen is in 
+# parameters: col - the index of the column that the queen is in
 def minConflict(c):
-    # initially set minimum # of conflicts equal to total # of queens 
+    # initially set minimum # of conflicts equal to total # of queens
     minimum_conflict = numQueens
-    # list to store the rows with minimum # of attacking queens 
+    # list to store the rows with minimum # of attacking queens
     minRows = []
-    
+
     # iterate through each row in the column
     for r in range(numQueens):
-        # calculate the total number of attacking queens by adding the number of queens in that row, left diagonal, and right diagonal 
-        conflicts = numRow[r] + numRightDiag[c + r] + numLeftDiag[c + (numQueens - r - 1)]
+        # calculate the total number of attacking queens by adding the number of queens in that row, left diagonal, and right diagonal
+        conflicts = numRow[r] + numRightDiag[c + r] + \
+            numLeftDiag[c + (numQueens - r - 1)]
 
         # if the number of queens is less than minimum_conflict, update minimum_conflict and set the minRows list as containing only the index of the current row
         if conflicts < minimum_conflict:
             minRows = [r]
             minimum_conflict = conflicts
-            
-        # if the number of queens is equal to minimum_conflict, append the row index to the list 
+
+        # if the number of queens is equal to minimum_conflict, append the row index to the list
         elif conflicts == minimum_conflict:
             minRows.append(r)
-            
+
     # select randomly a row index from list of rows with smallest # of queens
     minRow = random.choice(minRows)
     return minRow
@@ -154,17 +162,18 @@ def maxCol():
 
     # iterate through all the columns
     for c in range(0, numQueens):
-            # get the row value for the current column (where the queen is currently placed)
-            r = domain[c]
-            # find the # of attacking queens
-            con = numRow[r] + numRightDiag[c + r] + numLeftDiag[c + (numQueens - r - 1)]
-            # if the # of attacking queens is greater than the current max, then set the column as maximum_conflictsCol and update maximum_conflicts
-            if (con > maximum_conflicts):
-                    conflictColsList = [c]
-                    maximum_conflicts = con
-            # if the column ties with the current max column, then append the index value to the conflictColsList list
-            elif con == maximum_conflicts:
-                    conflictColsList.append(c)
+        # get the row value for the current column (where the queen is currently placed)
+        r = domain[c]
+        # find the # of attacking queens
+        con = numRow[r] + numRightDiag[c + r] + \
+            numLeftDiag[c + (numQueens - r - 1)]
+        # if the # of attacking queens is greater than the current max, then set the column as maximum_conflictsCol and update maximum_conflicts
+        if (con > maximum_conflicts):
+            conflictColsList = [c]
+            maximum_conflicts = con
+        # if the column ties with the current max column, then append the index value to the conflictColsList list
+        elif con == maximum_conflicts:
+            conflictColsList.append(c)
     # Randomly choose from the list of tied columns
     maxCol = random.choice(conflictColsList)
     return maxCol, maximum_conflicts
@@ -174,11 +183,11 @@ def maxCol():
 # returns false if a solution is not found under the given number of iterations
 def solve():
     global infiniteLoop
-    
+
     # if there was an infinite loop detected, create a random domain
     if (infiniteLoop == True):
         createRandomdomain()
-    else: 
+    else:
         # else, call createInitialdomain() to create a domain that's "close" to the solution
         createInitialdomain()
     # counts the number of iterations
@@ -193,17 +202,17 @@ def solve():
         totalIterations = numQueens
     else:
         totalIterations = 0.6 * numQueens
-        
-    # continue while current # of iterations doesn't exceed max iterations 
+
+    # continue while current # of iterations doesn't exceed max iterations
     while (iteration < totalIterations):
-        # find the column with the most attacking queens 
+        # find the column with the most attacking queens
         # return the column index and the # of attacking queens
         col, numConflicts = maxCol()
         # print("conflicts:", numConflicts)
         # print("col:", col)
         # if the total # of conflicts is greater than 3 (1 in row, 1 in left diagonal, and 1 in right diagonal), then there are more than 1 attacking queen
         if (numConflicts > 3):
-            # call minConflict to find the row the move the queen to (returns the row with the smallest # of attacking queens) 
+            # call minConflict to find the row the move the queen to (returns the row with the smallest # of attacking queens)
             position = minConflict(col)
             # append the position that the queen is moving to to the positions list
             positions.append(position)
@@ -224,7 +233,7 @@ def solve():
     # if there are only 2 distinct values in the positions list, then there is an infinite loop (queen keeps moving back and forth between 2 spots, never reaching a solution)
     if (len(set(positions)) == 2):
         infiniteLoop = True
-    
+
     # no solution is found after max # of iterations is reached
     return False
 
@@ -250,7 +259,7 @@ def writeOutput():
     # ex. turns index 0 into index 1 to represent the 1st square from the top of the chess domain in a given column
     for i in range(len(domain)):
         domain[i] += 1
-        
+
     solution = str(domain)
     with open('output.txt', 'a', 64) as file:
         # write the list containing the solution to output file
@@ -260,17 +269,36 @@ def writeOutput():
 
 def printDomain(domain, numQueens):
     # print(domain)
-    row = [[ '-' for x in range(0, numQueens)] for y in range(0, numQueens)]
-    for i in range(numQueens): 
+    row = [['-' for x in range(0, numQueens)] for y in range(0, numQueens)]
+    for i in range(numQueens):
         num = domain[i] - 1
         row[i][num] = 'Q'
- 
+
     for i in row:
         print(*i)
-    
+
     return(row)
-    
+
+
+def plot_solution(num_queens):
+    """
+        Given a solution, plot it and save the result to disk.
+    """
+    fig = plt.figure()
+    ax = fig.add_subplot(111, aspect='equal')
+    ax.set_xlim((0, num_queens))
+    ax.set_ylim((0, num_queens))
+
+    count = 0
+    for queen in solution:
+        ax.add_patch(patches.Rectangle((queen, count), 1, 1))
+        count += 1
+    fig.savefig(''.join([str(a) for a in solution]) +
+                '.png', dpi=150, bbox_inches='tight')
+    plt.close(fig)
 # this function is called to initiate the program
+
+
 def main():
     # use global keyword so that we can modify each variable inside the function
     global numQueens
@@ -283,7 +311,7 @@ def main():
     # call the function that reads the input file and returns the list of #s of queens (n)
     numQueensList = readInput()
 
-    # iterate through the list of #s of queens and return a solution for each 
+    # iterate through the list of #s of queens and return a solution for each
     for num in numQueensList:
         # set numQueens as equal to the # of queens read from input file
         numQueens = num
@@ -294,15 +322,15 @@ def main():
         # whether or not a solution has been found
         solved = False
         print("# of Queens (n): " + str(num))
-            
-        # while not solved, will continue to call solve to try and find a solution 
+
+        # while not solved, will continue to call solve to try and find a solution
         while (solved == False):
             # returns solved if a solution is found, false otherwise
             solved = solve()
-        
+
         # writes the solution to the output file
         writeOutput()
-        
+
         # figures out the time it took to find a solution and outputs it in the console
         endTime = time.time()
         totalTime = endTime - startTime
@@ -314,4 +342,5 @@ def main():
 #         print(domain)
 
 
-main()
+if __name__ == '__main__':
+    main()
