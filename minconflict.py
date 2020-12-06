@@ -69,49 +69,60 @@ def build_domain():
     # Begin with an empty domain
     domain = []
 
-    # Initialize the conflict arrays
-    # The diagonal conflict lists are the size of the number of diagonals of the domain
+    # Setting up conflict arrays
+    constraints_x = [0] * size
     constraights_right_diagonal = [0] * ((2 * size) - 1)
     constraights_left_diagonal = [0] * ((2 * size) - 1)
-    constraints_x = [0] * size
-
-    # Create an ordered set of all possible x values
+    
+    # Making an ordered set of possible x values 
     xSet = set(range(0, size))
-    # Create a list to keep track of which queens have not been placed
-    notPlaced = []
+    # Making a list in order to keep track of all the queens that need to get placed still
+    to_place = []
 
     for y in range(0, size):
-        # Pop the next possible x location to test
+       
+        # Popping to the next possible test x location
         testx = xSet.pop()
-        # Calculate the conflicts for potential location
+        
+        
+        # Calculating all conflicts for potential locations to enter
         conflicts = constraints_x[testx] + constraights_right_diagonal[y +
                                                              testx] + constraights_left_diagonal[y + (size - testx - 1)]
-        # If there are no conflicts, place a queen in that location on the domain
-        if conflicts == 0:
+       
+    
+        # No conflicts= place queen to that location on domainn
+        if conflicts == 0: 
             domain.append(testx)
             conflicts_update(y, domain[y], 1)
-        # If a conflict is found...
+       
+       
+        # If any conflict is found then we place the possibile x (textx) to back of xset
         else:
-            # Place the potential x to the back of the set
+
             xSet.add(testx)
-            # Take the next x from the set to test
+            
+            # then take next x from the set to test
             testx2 = xSet.pop()
-            # Calculate the conflicts
+
+            # Calculating the conflicts here to see how many
             conflicts2 = constraints_x[testx2] + constraights_right_diagonal[y +
                                                                    testx2] + constraights_left_diagonal[y + (size - testx2 - 1)]
-            # If there are no conflicts, place a queen in that location on the domain
+            # If no conflicts exits then we go and place a queen in that domain location 
             if conflicts2 == 0:
+
                 domain.append(testx2)
                 conflicts_update(y, domain[y], 1)
+
             else:
-                # Otherwise, add the possible x back to the set
+
+                # add the possible x back to the set
                 xSet.add(testx2)
                 # Add a None to the domain to hold the place of the potential queen
                 domain.append(None)
                 # Keep track of which yumn was not placed to be handled later
-                notPlaced.append(y)
+                to_place.append(y)
 
-    for y in notPlaced:
+    for y in to_place:
         # Place the remaining queen locations
         domain[y] = xSet.pop()
         # Update the conflict lists
