@@ -288,8 +288,6 @@ def plot_solution(num_queens):
     ax = fig.add_subplot(111, aspect='equal')
     ax.set_xlim((0, num_queens))
     ax.set_ylim((0, num_queens))
-
-    count = 0
     for queen in solution:
         ax.add_patch(patches.Rectangle((queen, count), 1, 1))
         count += 1
