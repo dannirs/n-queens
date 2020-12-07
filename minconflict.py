@@ -241,7 +241,7 @@ def solve():
 # read from file containing # of queens (n)
 def readInput():
     numQueensList = []
-    with open('input.txt', 'r') as file:
+    with open('output.txt', 'r') as file:
         # create a list to store all of the values of n that we need to find a solution for
         for line in file:
             # store each value of n into the list
@@ -279,22 +279,23 @@ def printDomain(domain, numQueens):
 
     return(row)
 
+# Given a solution, plot it and save the result to disk.
 
-def plot_solution(num_queens):
-    """
-        Given a solution, plot it and save the result to disk.
-    """
+
+def plot_solution(solution: List[int]) -> None:
+
     fig = plt.figure()
     ax = fig.add_subplot(111, aspect='equal')
     ax.set_xlim((0, num_queens))
     ax.set_ylim((0, num_queens))
+
+    count = 0
     for queen in solution:
+        # print(queen)
         ax.add_patch(patches.Rectangle((queen, count), 1, 1))
         count += 1
-    fig.savefig(''.join(num_queens) +
-                '.png', dpi=150, bbox_inches='tight')
+    fig.savefig('4-puzzle' + '.png', dpi=150, bbox_inches='tight')
     plt.close(fig)
-# this function is called to initiate the program
 
 
 def main():
@@ -306,8 +307,8 @@ def main():
     global numLeftDiag
     global infiniteLoop
 
-    # call the function that reads the input file and returns the list of #s of queens (n)
-    numQueensList = readInput()
+    # ask N
+    numQueensList = int(input("Please enter the number of queens: "))
 
     # iterate through the list of #s of queens and return a solution for each
     for num in numQueensList:
@@ -328,16 +329,14 @@ def main():
 
         # writes the solution to the output file
         writeOutput()
-
+        read_input = readInput()
+        plot_solution(read_input)
         # figures out the time it took to find a solution and outputs it in the console
         endTime = time.time()
         totalTime = endTime - startTime
         timeStr = str(trunc(totalTime * 100) / 100)
         print("Solution found in " + timeStr + " seconds\n")
         printDomain(domain, numQueens)
-#         for i in range(len(domain)):
-#             domain[i] += 1
-#         print(domain)
 
 
 if __name__ == '__main__':
