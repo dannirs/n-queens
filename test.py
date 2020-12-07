@@ -63,10 +63,10 @@ def plot_solution(solution: List[int]) -> None:
     ax.set_xlim((0, num_queens))
     ax.set_ylim((0, num_queens))
 
-    count = 0
-    for queen in solution:
-        ax.add_patch(patches.Rectangle((queen, count), 1, 1))
-        count += 1
+    #count = 0
+    # for queen in solution:
+    ax.add_patch(patches.Rectangle((1, 0), 1, 1))
+    #count += 1
     fig.savefig(''.join([str(a) for a in solution]) +
                 '.png', dpi=150, bbox_inches='tight')
     plt.close(fig)
@@ -75,10 +75,9 @@ def plot_solution(solution: List[int]) -> None:
 def main() -> None:
     solutions = list(find_all_solutions())
     print('In total: %d solutions' % len(solutions))
-
     count = 1
     for solution in solutions:
         print('Plotting solution %d/%d: ' %
               (count, len(solutions)) + str(solution))
-        plot_solution(solution)
-        count += 1
+    plot_solution(str(solutions[0]))
+    count += 1
