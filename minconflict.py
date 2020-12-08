@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 # import matplotlib.patches as patches
 # import seaborn
 from typing import Generator, List
-import math
 # creates an initial domain
 
 
