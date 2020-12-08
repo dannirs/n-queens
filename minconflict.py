@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import seaborn
 from typing import Generator, List
-
+import math
 # creates an initial domain
 
 
@@ -280,6 +280,7 @@ def printDomain(domain, numQueens):
     return(row)
 
 
+"""
 def plot_solution(num_queens):
     """
         Given a solution, plot it and save the result to disk.
@@ -288,12 +289,97 @@ def plot_solution(num_queens):
     ax = fig.add_subplot(111, aspect='equal')
     ax.set_xlim((0, num_queens))
     ax.set_ylim((0, num_queens))
-    for queen in solution:
-        ax.add_patch(patches.Rectangle((queen, count), 1, 1))
-        count += 1
+    count = 0
+    # for queen in solution:
+    ax.add_patch(patches.Rectangle((num_queens, count), 1, 1))
+    #    count += 1
     fig.savefig(''.join(num_queens) +
                 '.png', dpi=150, bbox_inches='tight')
     plt.close(fig)
+"""
+    # Creates and exports a visual representation of a chess board with the N-queens' solution
+    def exportPuzzle(self):
+        print("Exporting solution to queens-output.png...")
+        size = self.size
+        imgDimens = 1 + (50 * size)
+        if self.size > 1000:
+            imgDimens = self.size
+        elif imgDimens > 10000:
+            imgDimens = 10000
+        cellSize = math.floor(imgDimens / size)
+
+        board = Image.new('RGB', (imgDimens,imgDimens))
+        draw = ImageDraw.Draw(board)
+
+        if self.size > 50:
+            self.exportPuzzleLarge(draw, cellSize)
+        else:
+            self.exportPuzzleSmall(draw, cellSize)
+            
+        board.save('queens-output.png')
+        print("Success")
+
+    # Draws a traditional chess board with the N-queens marked as red squares
+    def exportPuzzleSmall(self, draw, cellSize):
+        size = self.size
+        posX = 0
+        posY = 0
+        fill = (255,255,255)
+        for i in range(size):
+            for col in range(size):
+                if (i+col) % 2 == 0:
+                    fill = (255,255,255)
+                else:
+                    fill = (169,169,169)
+                # Draws a chess board tile
+                draw.rectangle(
+                    (posX, posY, posX + cellSize, posY + cellSize),
+                    fill=fill,
+                    outline=(169,169,169))
+                # Indicates the position of a queen on the board
+                if self.puzzle[col] == i:
+                    midX = math.ceil(posX + (cellSize / 4))
+                    midY = posY + (cellSize / 4)
+                    draw.rectangle(
+                        (midX, midY, math.ceil(midX + (cellSize / 2)), math.ceil(midY + (cellSize / 2))),
+                        fill=(255,0,0),
+                        outline=None)
+                posX += cellSize
+            posY += cellSize
+            posX = 0
+
+    # Draws a checkered board where the N-queens are marked as grey tiles (n <= 1000) on a white background
+    # For n > 1000, N-queens are marked as white pixels on a black background
+    def exportPuzzleLarge(self, draw, cellSize):
+        size = self.size
+        posX = 0
+        posY = 0
+        if size > 1000:
+            outline = None
+            fill = (255,255,255)
+            for i in range(len(self.puzzle)):
+                posX = cellSize * i
+                posY = cellSize * self.puzzle[i]
+                draw.rectangle(
+                    (posX, posY, posX + cellSize, posY + cellSize),
+                    fill=fill,
+                    outline=outline)
+        else: 
+            outline = (169,169,169)
+            for i in range(size):
+                for col in range(size):
+                    if self.puzzle[col] == i:
+                        fill = (169,169,169)
+                    else:
+                        fill = (255,255,255)
+                    # Draws a chess board tile
+                    draw.rectangle(
+                        (posX, posY, posX + cellSize, posY + cellSize),
+                        fill=fill,
+                        outline=outline)
+                    posX += cellSize
+                posY += cellSize
+                posX = 0
 # this function is called to initiate the program
 
 
