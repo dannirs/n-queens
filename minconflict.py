@@ -2,8 +2,6 @@ from math import trunc
 import random
 import time
 import matplotlib.pyplot as plt
-# import matplotlib.patches as patches
-# import seaborn
 from typing import Generator, List
 # creates an initial domain
 
