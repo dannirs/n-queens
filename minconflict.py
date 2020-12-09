@@ -307,9 +307,7 @@ def main():
             # returns solved if a solution is found, false otherwise
             solved = solve()
         new_array = list(range(0, numQueens))
-        plt.plot(new_array, domain, 'ro')
-        plt.axis([0, numQueens, 0, numQueens])
-        plt.show()
+
         # writes the solution to the output file
         writeOutput()
 
@@ -319,6 +317,9 @@ def main():
         timeStr = str(trunc(totalTime * 100) / 100)
         print("Solution found in " + timeStr + " seconds\n")
         printDomain(domain, numQueens)
+        plt.plot(new_array, domain, 'ro')
+        plt.axis([0, numQueens, 0, numQueens])
+        plt.show()
 #        for i in range(len(domain)):
 #             domain[i] += 1
 #         print(domain)
