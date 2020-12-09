@@ -318,10 +318,10 @@ def main():
         totalTime = endTime - startTime
         timeStr = str(trunc(totalTime * 100) / 100)
         print("Solution found in " + timeStr + " seconds\n")
-#        printDomain(domain, numQueens)
-#         for i in range(len(domain)):
-#             domain[i] += 1
-#         print(domain)
+        printDomain(domain, numQueens)
+           for i in range(len(domain)):
+                domain[i] += 1
+            print(domain)
 
 
 if __name__ == '__main__':
