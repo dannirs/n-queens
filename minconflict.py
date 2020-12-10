@@ -182,11 +182,11 @@ def solve():
     global infiniteLoop
 
     # if there was an infinite loop detected, create a random domain
-    if (infiniteLoop == True):
-        createRandomdomain()
-    else:
+    #if (infiniteLoop == True):
+    createRandomdomain()
+    #else:
         # else, call createInitialdomain() to create a domain that's "close" to the solution
-        createInitialdomain()
+    #    createInitialdomain()
     # counts the number of iterations
     iteration = 0
     # keeps track of the movement of the queen between iterations
