@@ -316,7 +316,10 @@ def main():
         totalTime = endTime - startTime
         timeStr = str(trunc(totalTime * 100) / 100)
         print("Solution found in " + timeStr + " seconds\n")
+        
+        # COMMENT THIS LINE OUT TO NOT PRINT THE BOARD:
         printDomain(domain, numQueens)
+        
         plt.plot(new_array, domain, 'ro')
         plt.axis([0, numQueens, 0, numQueens])
         plt.show()
