@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 from typing import Generator, List
 # creates an initial domain
 
-
 def createInitialdomain():
     # use global keyword so that we can modify each variable inside the function
     global domain
@@ -221,6 +220,7 @@ def solve():
                 domain[col] = position
                 # call updateConflicts with add = 1 to add 1 to the rows, left diagonal, and right diagonal lists of the queen's new position
                 updateConflicts(col, domain[col], 1)
+
         # if total # of conflicts is 3 (1 in row, 1 in left diagonal, and 1 in right diagonal), then there is only 1 attacking queen so the queen doesn't need to be moved
         elif numConflicts == 3:
             # solution is found
